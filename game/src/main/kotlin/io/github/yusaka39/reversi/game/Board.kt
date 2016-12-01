@@ -32,7 +32,7 @@ class Board {
         private set
 
     fun put(disk: Disks, grid: Grid) {
-        tailrec fun getRevesingGridForStrategy(getNext: (Grid) -> Grid, g: Grid, acc: List<Grid>)
+        tailrec fun getReversingGridForStrategy(getNext: (Grid) -> Grid, g: Grid, acc: List<Grid>)
                 : List<Grid> {
             if (!g.isValid()) {
                 return emptyList()
@@ -41,12 +41,12 @@ class Board {
             return when(d) {
                 disk -> acc
                 null -> emptyList()
-                else -> getRevesingGridForStrategy(getNext, getNext(g), acc + listOf(g))
+                else -> getReversingGridForStrategy(getNext, getNext(g), acc + listOf(g))
             }
         }
 
         val reverseTargetGrids = SEARCH_STRATEGIES.map {
-            getRevesingGridForStrategy(it, it(grid), emptyList())
+            getReversingGridForStrategy(it, it(grid), emptyList())
         }.flatten() + listOf(grid)
 
         this.boardAsList = this.boardAsList.mapIndexed { y, list ->
@@ -59,6 +59,9 @@ class Board {
             }
         }
     }
+
+    fun getCountForSide(side: Disks) =
+            this.boardAsList.map { it.count { it == side } }.sum()
 }
 
 data class Grid(val x: Int, val y: Int) {
