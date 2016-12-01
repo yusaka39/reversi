@@ -1,6 +1,8 @@
 package io.github.yusaka39.reversi.commandline.main
 
 import io.github.yusaka39.reversi.commandline.main.impl.CommandLineOutputs
+import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineGameFactory
+import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineInputPlayerFactory
 import io.github.yusaka39.reversi.game.Board
 import io.github.yusaka39.reversi.game.Grid
 import io.github.yusaka39.reversi.game.constants.Disks
@@ -24,9 +26,9 @@ const val BANNER = """
 
 fun main(vararg args: String) {
     println(BANNER)
-    val board = Board()
-    board.put(Disks.BLACK, Grid(2, 4))
-    board.put(Disks.WHITE, Grid(2, 5))
-    board.put(Disks.BLACK, Grid(3, 5))
-    CommandLineOutputs().outputBoard(board)
+    val game = CommandLineGameFactory(getPlayerFactoryClass(args)).create()
+    game.start()
 }
+
+private fun getPlayerFactoryClass(args: Array<out String>) =
+        CommandLineInputPlayerFactory::class.java

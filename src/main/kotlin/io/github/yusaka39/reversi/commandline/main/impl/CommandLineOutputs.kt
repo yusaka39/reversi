@@ -15,7 +15,7 @@ class CommandLineOutputs : Outputs {
     }
 
     override fun announceWinner(winner: Player) {
-        println("${winner.getName()} win")
+        println("${winner.name} win")
     }
 
     override fun outputBoard(board: Board) {
