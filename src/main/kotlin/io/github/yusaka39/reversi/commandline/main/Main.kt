@@ -1,13 +1,7 @@
 package io.github.yusaka39.reversi.commandline.main
 
-import io.github.yusaka39.reversi.commandline.main.impl.CommandLineOutputs
 import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineGameFactory
 import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineInputPlayerFactory
-import io.github.yusaka39.reversi.game.Board
-import io.github.yusaka39.reversi.game.Grid
-import io.github.yusaka39.reversi.game.constants.Disks
-import io.github.yusaka39.reversi.game.interfaces.Outputs
-import io.github.yusaka39.reversi.game.interfaces.Player
 
 
 const val BANNER = """
