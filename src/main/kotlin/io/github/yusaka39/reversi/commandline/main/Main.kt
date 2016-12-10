@@ -3,6 +3,7 @@ package io.github.yusaka39.reversi.commandline.main
 import com.google.common.reflect.ClassPath
 import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineGameFactory
 import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineInputPlayerFactory
+import io.github.yusaka39.reversi.game.constants.Sides
 import io.github.yusaka39.reversi.game.factory.AbstractPlayerFactory
 import java.io.File
 
@@ -23,30 +24,41 @@ const val BANNER = """
 
 fun main(vararg args: String) {
     println(BANNER)
-    val game = CommandLineGameFactory(getPlayerFactoryClass(args)).create()
+    val playerFactoryClasses = getPlayerFactoryClasses(args)
+    println("Choose BLACK player factory")
+    val blackFactory = createPlayerFactoryFromInput(playerFactoryClasses)
+    println("Choose WHITE player factory")
+    val whiteFactory = createPlayerFactoryFromInput(playerFactoryClasses)
+    val game = CommandLineGameFactory(blackFactory.create(Sides.BLACK),
+                                      whiteFactory.create(Sides.WHITE))
+            .create()
     game.start()
 }
 
-private fun getPlayerFactoryClass(args: Array<out String>): Class<out AbstractPlayerFactory> {
-    //val files = File(args[])
-    //val classLoaders = listOf(ClassLoader.getSystemClassLoader()) +
-
-    ClassPath.from(ClassLoader.getSystemClassLoader())
+private fun getPlayerFactoryClasses(args: Array<out String>):
+        List<Class<out AbstractPlayerFactory>> {
+    return ClassPath.from(ClassLoader.getSystemClassLoader())
             .topLevelClasses
             .map { try { it.load() } catch (e: NoClassDefFoundError) { null } }
-            .filterNotNull()
-            .filter { it.isImplements(AbstractPlayerFactory::class.java) }
-
-
-
-    return CommandLineInputPlayerFactory::class.java
+            .filter {
+                it?.let {
+                    it != AbstractPlayerFactory::class.java &&
+                            AbstractPlayerFactory::class.java.isAssignableFrom(it)
+                } ?: false
+            }
+            .map { it as Class<out AbstractPlayerFactory> }
 }
 
-private fun <T> Class<T>.isImplements(clazz: Class<*>): Boolean {
-    tailrec fun iter(c: Class<*>?): Boolean = when (c) {
-        null -> false
-        clazz -> true
-        else -> iter(c.superclass)
+private fun createPlayerFactoryFromInput(
+        availableFactoryClasses: List<Class<out AbstractPlayerFactory>>): AbstractPlayerFactory {
+    availableFactoryClasses.forEachIndexed { i, clazz ->
+        println("    ${"%2d".format(i)}) ${clazz.name}")
     }
-    return iter(this)
+    val idx: Int? = try { readLine()?.trim()?.toInt() } catch (e: NumberFormatException) { null }
+
+    return if (idx != null && 0 <= idx && idx < availableFactoryClasses.size) {
+        availableFactoryClasses[idx].newInstance()
+    } else {
+        createPlayerFactoryFromInput(availableFactoryClasses)
+    }
 }

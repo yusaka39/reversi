@@ -6,10 +6,10 @@ import io.github.yusaka39.reversi.game.interfaces.Outputs
 import io.github.yusaka39.reversi.game.interfaces.Player
 
 
-class Game(val board: Board, val outputs: Outputs, playerFactory: AbstractPlayerFactory) {
+class Game(val board: Board, val outputs: Outputs, blackPlayer: Player, whitePlayer: Player) {
     val players: Map<Sides, Player> = mapOf(
-            Sides.BLACK to playerFactory.create(Sides.BLACK),
-            Sides.WHITE to playerFactory.create(Sides.WHITE)
+            Sides.BLACK to blackPlayer,
+            Sides.WHITE to whitePlayer
     )
 
     var turnHolder = this.players[Sides.BLACK]!!

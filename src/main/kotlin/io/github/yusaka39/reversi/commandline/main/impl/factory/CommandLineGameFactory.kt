@@ -5,10 +5,11 @@ import io.github.yusaka39.reversi.game.Board
 import io.github.yusaka39.reversi.game.Game
 import io.github.yusaka39.reversi.game.factory.AbstractGameFactory
 import io.github.yusaka39.reversi.game.factory.AbstractPlayerFactory
+import io.github.yusaka39.reversi.game.interfaces.Player
 
 
-class CommandLineGameFactory(val playerFactoryClass: Class<out AbstractPlayerFactory>)
+class CommandLineGameFactory(val bPlayer: Player, val wPlayer: Player)
     : AbstractGameFactory() {
     override fun create(): Game = Game(Board(), CommandLineOutputs(),
-                                       this.playerFactoryClass.newInstance())
+                                       this.bPlayer, this.wPlayer)
 }

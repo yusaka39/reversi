@@ -50,8 +50,8 @@ class CommandLineOutputs : Outputs {
         BOARD_FORMAT.format(
                 *(it.map {
                     when (it) {
-                        Sides.BLACK -> "@"
-                        Sides.WHITE -> "O"
+                        Sides.BLACK -> "\u001b[40m\u001b[37m@\u001b[49m\u001b[39m"
+                        Sides.WHITE -> "\u001b[47m\u001b[30mO\u001b[49m\u001b[39m"
                         else -> " "
                     }
                 }).toTypedArray()
