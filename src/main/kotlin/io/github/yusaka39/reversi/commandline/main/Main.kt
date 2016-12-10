@@ -6,6 +6,7 @@ import io.github.yusaka39.reversi.commandline.main.impl.factory.CommandLineInput
 import io.github.yusaka39.reversi.game.constants.Sides
 import io.github.yusaka39.reversi.game.factory.AbstractPlayerFactory
 import java.io.File
+import java.net.URLClassLoader
 
 
 const val BANNER = """
@@ -37,8 +38,10 @@ fun main(vararg args: String) {
 
 private fun getPlayerFactoryClasses(args: Array<out String>):
         List<Class<out AbstractPlayerFactory>> {
-    return ClassPath.from(ClassLoader.getSystemClassLoader())
-            .topLevelClasses
+    val urls = File(args[0]).listFiles { f, name -> name.matches(Regex(""".*\.jar$""")) }
+            .map { it.toURI().toURL() }
+
+    return ClassPath.from(URLClassLoader.newInstance(urls.toTypedArray())).topLevelClasses
             .map { try { it.load() } catch (e: NoClassDefFoundError) { null } }
             .filter {
                 it?.let {
