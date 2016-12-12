@@ -38,8 +38,11 @@ fun main(vararg args: String) {
 
 private fun getPlayerFactoryClasses(args: Array<out String>):
         List<Class<out AbstractPlayerFactory>> {
-    val urls = File(args[0]).listFiles { f, name -> name.matches(Regex(""".*\.jar$""")) }
-            .map { it.toURI().toURL() }
+    val urls = args.getOrNull(0)?.let {
+        File(it).listFiles { f, name -> name.matches(Regex(""".*\.jar$""")) }
+                .filterNotNull()
+                .map { it.toURI().toURL() }
+    } ?: emptyList()
 
     return ClassPath.from(URLClassLoader.newInstance(urls.toTypedArray())).topLevelClasses
             .map { try { it.load() } catch (e: NoClassDefFoundError) { null } }
